@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Product</h1>
+        
+        <form id="editProductForm" method="POST" action="/products/{{ product.id }}/">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ product.quantity }}" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ product.price }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+
+        <a class="btn btn-secondary" href="/products/{{ product.id }}/">&#8592; Back</a>
+        <a class="btn btn-secondary" href="/">Go to Home</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Function to handle updating a product via AJAX
+        $(document).ready(function() {
+            $('#editProductForm').submit(function(event) {
+                event.preventDefault();
+                var form = $(this);
+                var formData = form.serialize();
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: formData,
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    success: function(response) {
+                        // Redirect to the product details page after successful product update
+                        window.location.href = "/products/{{ product.id }}/";
+                    },
+                    error: function(xhr, textStatus, errorMessage) {
+                        console.log(errorMessage);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
